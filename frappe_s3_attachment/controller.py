@@ -257,6 +257,33 @@ def generate_file(key=None, file_name=None):
         frappe.local.response['body'] = "Key not found."
     return
 
+@frappe.whitelist(allow_guest=True)
+def generate_file_public(key=None, file_name=None):
+    """
+    Function to stream file from s3.
+    """
+    if key:
+        s3_upload = S3Operations()
+        signed_url = s3_upload.get_url(key, file_name)
+        frappe.local.response["type"] = "redirect"
+        frappe.local.response["location"] = signed_url
+    else:
+        frappe.local.response['body'] = "Key not found."
+    return
+
+@frappe.whitelist()
+def generate_link_file(key=None, file_name=None):
+    """
+    Function to stream file from s3.
+    """
+    if key:
+        s3_upload = S3Operations()
+        signed_url = s3_upload.get_url(key, file_name)
+        frappe.local.response["location"] = signed_url
+    else:
+        frappe.local.response['body'] = "Key not found."
+    return
+
 
 def upload_existing_files_s3(name, file_name):
     """
